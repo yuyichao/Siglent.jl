@@ -139,6 +139,7 @@ function scpi_query_block(s::SiglentScope, cmd)
     _with_timeout(s, "block terminator") do
         readuntil(s.sock, UInt8('\n'); keep=false)
     end
+    _drop_buffered_newlines(s)
     return payload
 end
 
@@ -175,10 +176,18 @@ function _query_image(s::SiglentScope, cmd)
     # (libuv stops reading between `read` calls, so restart it to see new bytes)
     Base.start_reading(s.sock)
     timedwait(() -> bytesavailable(s.sock) > 0, s.trailer_timeout; pollint=s.pollint)
-    if bytesavailable(s.sock) > 0 && peek(s.sock, UInt8) == UInt8('\n')
+    _drop_buffered_newlines(s)
+    return img
+end
+
+"""
+Discard `\n` bytes that have already been received, so that e.g. the second byte of a
+`\n\n` block terminator is not read as the response to the next query. Does not wait.
+"""
+function _drop_buffered_newlines(s::SiglentScope)
+    while bytesavailable(s.sock) > 0 && peek(s.sock, UInt8) == UInt8('\n')
         read(s.sock, UInt8)
     end
-    return img
 end
 
 # ---------------------------------------------------------------------- #
