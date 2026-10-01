@@ -9,3 +9,10 @@ Sockets = "6462fe0b-24de-5631-8697-dd941f90decc"
 [compat]
 Sockets = "1.11.0"
 julia = "1.11"
+
+[extras]
+Distributed = "8ba89e20-285c-5b6f-9357-94700520ee1b"
+Test = "8dfed614-e22c-5e08-85e1-65c5234f0b40"
+
+[targets]
+test = ["Test", "Distributed"]
