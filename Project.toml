@@ -1,0 +1,4 @@
+name = "Siglent"
+uuid = "58e88a13-f50a-4779-a682-16790e862cfa"
+version = "0.1.0"
+authors = ["Yichao Yu <yyc1992@gmail.com>"]
